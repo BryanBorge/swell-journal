@@ -47,7 +47,7 @@ export const Equipment = () => {
 const EquiptmentTitle: FC<{ title: string; onClick: () => void }> = ({ title, onClick }) => {
   return (
     <Box display="flex" alignItems="center" justifyContent="flex-start">
-      <Typography variant="h3">{title}</Typography>
+      <Typography variant="h4">{title}</Typography>
       <IconButton size="large" onClick={() => onClick()}>
         <AddCircleOutlineIcon fontSize="inherit" />
       </IconButton>
