@@ -1,6 +1,4 @@
-import { Card, CardContent, Typography, Stack, Grid, IconButton, Box } from "@mui/material";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Card, CardContent, Typography, Stack, Grid } from "@mui/material";
 import { EquiptmentCardTitle } from "../Shared/EquiptmentCardTitle";
 
 type BootType = {

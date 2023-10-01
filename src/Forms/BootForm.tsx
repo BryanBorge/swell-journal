@@ -92,7 +92,7 @@ export const BootForm = () => {
                     {...field}
                     error={!!errors.type?.message}
                     helperText={errors.type?.message}
-                    label="Glove type"
+                    label="Boot type"
                   />
                 )}
               />

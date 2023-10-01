@@ -12,8 +12,6 @@ export const Glove = () => {
 
   const gloves = data ? JSON.parse(data) : [];
 
-  console.log("golved", gloves);
-
   const renderGloves = gloves.map((glove: GloveType) => {
     return (
       <Grid item xs={12} sm={3}>
