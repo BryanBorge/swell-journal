@@ -1,15 +1,26 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+import { createBrowserRouter, RouterProvider, createRoutesFromElements, Route } from "react-router-dom";
+import { ContentLayout } from "./ContentLayout";
+import { Equipment } from "./Equipment/Equipment";
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<ContentLayout />}>
+      <Route path="equipment" element={<Equipment />} />
+      <Route path="journal" element={<div>You can add an entry here soon</div>} />
+    </Route>
+  )
 );
+
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+
 root.render(
   <React.StrictMode>
-    <App />
+    {/* <App /> */}
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 

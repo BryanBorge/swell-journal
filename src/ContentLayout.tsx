@@ -16,6 +16,9 @@ import { WetsuitForm } from "./Forms/WetsuitForm";
 import { BeachForm } from "./Forms/BeachForm";
 import { GloveForm } from "./Forms/GloveForm";
 import { BootForm } from "./Forms/BootForm";
+import { Outlet } from "react-router-dom";
+import { Header } from "./Header";
+
 export const ContentLayout = () => {
   const [isBoardFormOpen, setIsBoardFormOpen] = useState<boolean>(false);
   const [isWetSuitFormOpen, setIsWetSuitFormOpen] = useState<boolean>(false);
@@ -25,8 +28,12 @@ export const ContentLayout = () => {
   const theme = useTheme();
 
   return (
-    <Container sx={{ my: theme.spacing(5) }}>
-      <Stack alignItems="center" spacing={2}>
+    <>
+      <Header />
+      <Container sx={{ py: theme.spacing(3) }}>
+        <Outlet />
+      </Container>
+      {/* <Stack alignItems="center" spacing={2}>
         <Stack spacing={1} alignItems="center">
           <Typography variant="h5">Board Form</Typography>
           <Button onClick={() => setIsBoardFormOpen(true)}>Open board form</Button>
@@ -51,7 +58,7 @@ export const ContentLayout = () => {
           <Typography variant="h5">Beach Form</Typography>
           <Button onClick={() => setIsBeachFormOpen(true)}>Open beach form</Button>
         </Stack>
-      </Stack>
+      </Stack> */}
 
       <Dialog open={isBoardFormOpen} onClose={() => setIsBoardFormOpen(false)}>
         <DialogTitle>
@@ -122,6 +129,6 @@ export const ContentLayout = () => {
           <BeachForm />
         </DialogContent>
       </Dialog>
-    </Container>
+    </>
   );
 };
