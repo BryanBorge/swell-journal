@@ -1,7 +1,7 @@
 import { Card, CardContent, Typography, Stack, Grid } from "@mui/material";
 import { EquiptmentCardTitle } from "../Shared/EquiptmentCardTitle";
 
-type GloveType = {
+export type GloveType = {
   brand: string;
   thickness: string;
   type: string;
@@ -14,7 +14,7 @@ export const Glove = () => {
 
   const renderGloves = gloves.map((glove: GloveType) => {
     return (
-      <Grid item xs={12} sm={3}>
+      <Grid item xs={12} sm={3} key={`${glove.brand}-${glove.thickness}`}>
         <Card elevation={3}>
           <CardContent>
             <Stack spacing={1}>

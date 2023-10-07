@@ -1,7 +1,7 @@
 import { Card, CardContent, Typography, Stack, Grid } from "@mui/material";
 import { EquiptmentCardTitle } from "../Shared/EquiptmentCardTitle";
 
-type BootType = {
+export type BootType = {
   brand: string;
   thickness: string;
   type: string;
@@ -14,7 +14,7 @@ export const Boot = () => {
 
   const renderBoots = boots.map((boot: BootType) => {
     return (
-      <Grid item xs={12} sm={3}>
+      <Grid item xs={12} sm={3} key={`${boot.brand}-${boot.thickness}`}>
         <Card elevation={3}>
           <CardContent>
             <Stack spacing={1}>

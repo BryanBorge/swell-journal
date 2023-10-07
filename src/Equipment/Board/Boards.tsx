@@ -1,7 +1,7 @@
 import { Card, CardContent, Typography, Stack, Grid } from "@mui/material";
 import { EquiptmentCardTitle } from "../Shared/EquiptmentCardTitle";
 
-type BoardType = {
+export type BoardType = {
   brand: string;
   finSetup: string;
   height: string;
@@ -16,7 +16,7 @@ export const Boards = () => {
 
   const renderBoards = boards.map((board: BoardType) => {
     return (
-      <Grid item xs={12} sm={3}>
+      <Grid item xs={12} sm={3} key={`${board.brand}-${board.height}`}>
         <Card elevation={3}>
           <CardContent>
             <Stack spacing={1}>

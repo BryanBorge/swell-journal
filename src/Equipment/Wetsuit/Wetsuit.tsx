@@ -1,7 +1,7 @@
 import { Card, CardContent, Typography, Stack, Grid } from "@mui/material";
 import { EquiptmentCardTitle } from "../Shared/EquiptmentCardTitle";
 
-type WetsuitType = {
+export type WetsuitType = {
   brand: string;
   suitType: string;
   thickness: string;
@@ -15,7 +15,7 @@ export const Wetsuit = () => {
 
   const renderWetsuits = wetsuits.map((wetsuit: WetsuitType) => {
     return (
-      <Grid item xs={12} sm={3}>
+      <Grid item xs={12} sm={3} key={`${wetsuit.brand}-${wetsuit.thickness}`}>
         <Card elevation={3}>
           <CardContent>
             <Stack spacing={0.5}>
