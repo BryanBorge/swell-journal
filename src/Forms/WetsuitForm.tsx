@@ -5,6 +5,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { WetsuitType } from "../Equipment/Wetsuit/Wetsuit";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
+import { useContext } from "react";
+import { AuthContext } from "../Context/AuthContext";
 
 const wetsuitBrands = ["Xcel", "Hyperflex"];
 
@@ -31,6 +33,7 @@ const schema = yup.object().shape({
 
 export const WetsuitForm = () => {
   const theme = useTheme();
+  const { user } = useContext(AuthContext);
 
   const {
     control,
@@ -50,7 +53,9 @@ export const WetsuitForm = () => {
     };
 
     try {
-      const docRef = await addDoc(collection(db, "wetsuits"), {
+      // Wetsuits for the currentuser
+      const wetsuitCollection = collection(db, `wetsuits/${user?.uid}/wetsuits`);
+      const docRef = await addDoc(wetsuitCollection, {
         ...newWetsuit,
       });
       console.log("Document written with ID: ", docRef.id);

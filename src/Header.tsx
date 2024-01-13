@@ -12,11 +12,10 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { NavLink } from "react-router-dom";
-import { auth } from "./firebase";
 import { AuthContext } from "./Context/AuthContext";
 
 const pages = ["Equipment", "Journal"];
-const settings = ["Settings", "Logout"];
+const settings = ["Profile", "Logout"];
 
 export const Header = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -99,7 +98,7 @@ export const Header = () => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt={user?.displayName ?? "user"} src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
             <Menu

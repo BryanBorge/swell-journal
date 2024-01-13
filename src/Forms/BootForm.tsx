@@ -5,6 +5,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { BootType } from "../Equipment/Boot/Boot";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
+import { useContext } from "react";
+import { AuthContext } from "../Context/AuthContext";
 
 const bootBrands = ["Xcel", "Hyperflex", "Solite"];
 const bootTypes = ["Round toe", "Split toe"];
@@ -17,6 +19,7 @@ const schema = yup.object().shape({
 
 export const BootForm = () => {
   const theme = useTheme();
+  const { user } = useContext(AuthContext);
 
   const {
     control,
@@ -35,7 +38,9 @@ export const BootForm = () => {
     };
 
     try {
-      const docRef = await addDoc(collection(db, "boots"), {
+      // Wetsuits for the currentuser
+      const bootCollection = collection(db, `boots/${user?.uid}/boots`);
+      const docRef = await addDoc(bootCollection, {
         ...newBoots,
       });
       console.log("Document written with ID: ", docRef.id);

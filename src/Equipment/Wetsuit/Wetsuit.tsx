@@ -1,8 +1,9 @@
 import { Card, CardContent, Typography, Stack, Grid, CircularProgress } from "@mui/material";
 import { EquiptmentCardTitle } from "../Shared/EquiptmentCardTitle";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { db } from "../../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query } from "firebase/firestore";
+import { AuthContext } from "../../Context/AuthContext";
 
 export type WetsuitType = {
   brand: string;
@@ -15,17 +16,32 @@ export type WetsuitType = {
 export const Wetsuit = () => {
   const [wetSuitData, setWetSuitData] = useState<Array<WetsuitType>>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | undefined>(undefined);
+  const { user } = useContext(AuthContext);
 
   const getdata = async () => {
     setLoading(true);
-    await getDocs(collection(db, "wetsuits")).then(querySnapshot => {
-      const newData = querySnapshot.docs.map(doc => ({
+
+    try {
+      // Get all wetsuits for the current user
+      const wetsuitCollection = collection(db, `wetsuits/${user?.uid}/wetsuits`);
+
+      const wetsuitQuery = query(wetsuitCollection);
+
+      const wetsuitSnapshot = await getDocs(wetsuitQuery);
+
+      const newData = wetsuitSnapshot.docs.map(doc => ({
         ...doc.data(),
         id: doc.id,
       })) as Array<WetsuitType>;
+
       setWetSuitData(newData);
       setLoading(false);
-    });
+    } catch (err: any) {
+      console.log(err);
+      if (err.code === "permission-denied") setError("Sign in or register to see this!");
+      else setError("Something went wrong loading boards...");
+    }
   };
 
   useEffect(() => {
@@ -47,8 +63,16 @@ export const Wetsuit = () => {
     );
   });
 
+  if (error) {
+    return <Typography variant="body1">{error}</Typography>;
+  }
+
   if (loading) {
     return <CircularProgress />;
+  }
+
+  if (!renderWetsuits?.length) {
+    return <Typography variant="body1">Click the plus above to add a wetsuit!</Typography>;
   }
 
   return (

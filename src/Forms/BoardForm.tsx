@@ -3,8 +3,10 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { db } from "../firebase";
-import { FirestoreBoardType } from "../Equipment/Board/Boards";
 import { collection, addDoc } from "firebase/firestore";
+import { useContext } from "react";
+import { AuthContext } from "../Context/AuthContext";
+import { BoardType } from "../Equipment/Board/Boards";
 
 const boardBrands = ["Pyzel", "Lost", "Channel Islands", "Bunger", "Rusty", "Handshaped"];
 const finSetups = ["Thruster", "Twin", "Quad"];
@@ -20,7 +22,7 @@ const schema = yup.object().shape({
 
 export const BoardForm = () => {
   const theme = useTheme();
-
+  const { user } = useContext(AuthContext);
   const {
     control,
     handleSubmit,
@@ -31,16 +33,19 @@ export const BoardForm = () => {
   });
 
   const onSubmit = async (data: any) => {
-    const newBoard: FirestoreBoardType = {
+    const newBoard: BoardType = {
       brand: data.brand,
       height: data.height,
       width: data.width,
       thickness: data.thickness,
-      fins: data.finSetup,
+      finSetup: data.finSetup,
     };
 
     try {
-      const docRef = await addDoc(collection(db, "boards"), {
+      // Boards for the currentuser
+      const boardCollection = collection(db, `boards/${user?.uid}/boards`);
+
+      const docRef = await addDoc(boardCollection, {
         ...newBoard,
       });
       console.log("Document written with ID: ", docRef.id);

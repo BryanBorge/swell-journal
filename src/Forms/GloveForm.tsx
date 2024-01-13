@@ -5,6 +5,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { GloveType } from "../Equipment/Glove/Glove";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import { AuthContext } from "../Context/AuthContext";
+import { useContext } from "react";
 
 const gloveBrands = ["Xcel", "Hyperflex"];
 const gloveTypes = ["Lobster claw", "Five finger", "Mitten"];
@@ -17,7 +19,7 @@ const schema = yup.object().shape({
 
 export const GloveForm = () => {
   const theme = useTheme();
-
+  const { user } = useContext(AuthContext);
   const {
     control,
     handleSubmit,
@@ -35,7 +37,9 @@ export const GloveForm = () => {
     };
 
     try {
-      const docRef = await addDoc(collection(db, "gloves"), {
+      // Wetsuits for the currentuser
+      const gloveCollection = collection(db, `gloves/${user?.uid}/gloves`);
+      const docRef = await addDoc(gloveCollection, {
         ...newGloves,
       });
       console.log("Document written with ID: ", docRef.id);

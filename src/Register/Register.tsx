@@ -1,5 +1,3 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import {
   Avatar,
   Box,
@@ -11,32 +9,29 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Controller, useForm } from "react-hook-form";
 import { PasswordTextField } from "../Shared/PasswordTextField";
 import { auth } from "../firebase";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
-const provider = new GoogleAuthProvider();
-provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
-auth.languageCode = "it";
-provider.setCustomParameters({
-  login_hint: "user@example.com",
-});
-
-type LoginFormData = {
+type RegisterFormData = {
   email: string;
+  displayName: string;
   password: string;
 };
 
 const schema = yup.object().shape({
   email: yup.string().email().required("Please enter your email"),
+  displayName: yup.string().required("Please tell us your name"),
   password: yup.string().required("Please enter a password"),
 });
 
-export const Login = () => {
+export const Register = () => {
   const [error, setError] = useState<string | undefined>();
   const navigate = useNavigate();
   const {
@@ -48,20 +43,21 @@ export const Login = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    signInWithEmailAndPassword(auth, data.email, data.password)
+  const onSubmit = (data: RegisterFormData) => {
+    createUserWithEmailAndPassword(auth, data.email, data.password)
       .then(userCredential => {
         console.log("userCredential", userCredential);
         const user = userCredential.user;
 
         if (!user) return;
 
-        navigate("/equipment");
+        return updateProfile(user, { displayName: data.displayName }).then(res => {
+          setError(undefined);
+          navigate("/equipment");
+        });
       })
       .catch(error => {
-        console.log(error.message);
-        console.log(error.code);
-        if (error.code === "auth/email-already-in-use" || error.code === "auth/invalid-credential") {
+        if (error.code === "auth/email-already-in-use") {
           setError("Invalid credentials");
         }
       });
@@ -79,10 +75,29 @@ export const Login = () => {
         <LockOutlinedIcon />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Sign in
+        Sign up
       </Typography>
-      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 3 }}>
+      <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
         <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Controller
+              name="displayName"
+              control={control}
+              render={({ field: { onChange, value } }: any) => (
+                <TextField
+                  InputProps={{ inputProps: { min: 0 } }}
+                  onChange={onChange}
+                  value={value}
+                  fullWidth
+                  error={!!errors.displayName?.message}
+                  helperText={errors.displayName?.message}
+                  id="displayName"
+                  label="What should we call you"
+                  name="displayName"
+                />
+              )}
+            />
+          </Grid>
           <Grid item xs={12}>
             <Controller
               name="email"
@@ -124,50 +139,22 @@ export const Login = () => {
               )}
             />
           </Grid>
-        </Grid>
-        <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
-        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 1 }}>
-          Sign In
-        </Button>
-        <Button
-          fullWidth
-          variant="outlined"
-          onClick={() => {
-            signInWithPopup(auth, provider)
-              .then(result => {
-                // This gives you a Google Access Token. You can use it to access the Google API.
-                const credential = GoogleAuthProvider.credentialFromResult(result);
-                const token = credential?.accessToken;
-                // The signed-in user info.
-                const user = result.user;
-                // IdP data available using getAdditionalUserInfo(result)
-
-                console.log("result", result);
-                navigate("/equipment");
-                // ...
-              })
-              .catch(error => {
-                // Handle Errors here.
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                // The email of the user's account used.
-                const email = error.customData.email;
-                // The AuthCredential type that was used.
-                const credential = GoogleAuthProvider.credentialFromError(error);
-                // ...
-              });
-          }}
-          sx={{ mb: 2 }}>
-          Sign in with Google
-        </Button>
-        <Grid container>
-          <Grid item xs>
-            <Link href="#" variant="body2">
-              Forgot password?
-            </Link>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={<Checkbox value="allowExtraEmails" color="primary" />}
+              label="I want to receive updates via email."
+            />
           </Grid>
+        </Grid>
+        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 1 }}>
+          Sign up
+        </Button>
+        <Button fullWidth variant="outlined" onClick={() => {}} sx={{ mb: 2 }}>
+          Sign up with Google
+        </Button>
+        <Grid container justifyContent="flex-end">
           <Grid item>
-            <Link component={RouterLink} to="/register" variant="body2">
+            <Link component={RouterLink} to="/login" variant="body2">
               Don't have an account? Sign Up
             </Link>
           </Grid>

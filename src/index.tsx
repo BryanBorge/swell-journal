@@ -1,26 +1,26 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import reportWebVitals from "./reportWebVitals";
-import {
-  createBrowserRouter,
-  RouterProvider,
-  createRoutesFromElements,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import { ContentLayout } from "./ContentLayout";
-import { Equipment } from "./Equipment/Equipment";
-import { Journal } from "./Journal/Journal";
+import { Typography } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Button, Typography } from "@mui/material";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth } from "./firebase";
-import { ProtectedRoute } from "./ProtectedRoute";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import {
+  Navigate,
+  Route,
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from "react-router-dom";
+import { ContentLayout } from "./ContentLayout";
 import { AuthContextProvider } from "./Context/AuthContext";
-import Login from "./Login/Login";
+import { Equipment } from "./Equipment/Equipment";
+import { Journal } from "./Journal/Journal";
+import { Login } from "./Login/Login";
 import Logout from "./Login/Logout";
+import Shell from "./Login/Shell";
+import { ProtectedRoute } from "./ProtectedRoute";
+import { Register } from "./Register/Register";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -30,13 +30,28 @@ const router = createBrowserRouter(
         <Route path="equipment" element={<Equipment />} />
         <Route path="journal" element={<Journal />} />
       </Route>
-      <Route path="login" element={<Login />} />
+      <Route
+        path="login"
+        element={
+          <Shell>
+            <Login />
+          </Shell>
+        }
+      />
+      <Route
+        path="register"
+        element={
+          <Shell>
+            <Register />
+          </Shell>
+        }
+      />
       <Route path="logout" element={<Logout />} />
       <Route
-        path="settings"
+        path="profile"
         element={
           <>
-            Settings...
+            Profile...
             <Typography>Add choice to change units (knots, mph, ft, meters etc...)</Typography>
             <Typography>Add addition/removal of beaches/locations?</Typography>
           </>
