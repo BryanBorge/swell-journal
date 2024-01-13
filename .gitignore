@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+# firebase
+/src/firebase.ts
+
 # production
 /build
 
