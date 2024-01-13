@@ -3,6 +3,11 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
+export type BeachType = {
+  name: string;
+  location: string;
+};
+
 const schema = yup.object().shape({
   name: yup.string().required("Please enter the beach name"),
   location: yup.string().required("Please enter the location"),

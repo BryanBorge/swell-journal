@@ -2,6 +2,9 @@ import { Stack, TextField, Autocomplete, Button, Box, useTheme } from "@mui/mate
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { GloveType } from "../Equipment/Glove/Glove";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 const gloveBrands = ["Xcel", "Hyperflex"];
 const gloveTypes = ["Lobster claw", "Five finger", "Mitten"];
@@ -24,14 +27,21 @@ export const GloveForm = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: any) => {
-    let savedData = localStorage.getItem("gloves") ?? "";
+  const onSubmit = async (data: any) => {
+    const newGloves: GloveType = {
+      brand: data.brand,
+      thickness: data.thickness,
+      type: data.type,
+    };
 
-    let gloves = !!savedData ? JSON.parse(savedData) : [];
-
-    gloves.push(data);
-
-    localStorage.setItem("gloves", JSON.stringify(gloves));
+    try {
+      const docRef = await addDoc(collection(db, "gloves"), {
+        ...newGloves,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   };
 
   return (

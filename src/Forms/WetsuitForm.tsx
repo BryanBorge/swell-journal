@@ -2,6 +2,9 @@ import { Stack, TextField, Autocomplete, Button, Box, useTheme, MenuItem } from 
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { WetsuitType } from "../Equipment/Wetsuit/Wetsuit";
+import { db } from "../firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 const wetsuitBrands = ["Xcel", "Hyperflex"];
 
@@ -38,16 +41,23 @@ export const WetsuitForm = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: any) => {
-    let savedData = localStorage.getItem("wetsuits") ?? "";
+  const onSubmit = async (data: any) => {
+    const newWetsuit: WetsuitType = {
+      brand: data.brand,
+      thickness: data.thickness,
+      suitType: data.suitType,
+      zipperType: data.zipperType,
+    };
 
-    let wetsuits = !!savedData ? JSON.parse(savedData) : [];
-
-    wetsuits.push(data);
-
-    localStorage.setItem("wetsuits", JSON.stringify(wetsuits));
+    try {
+      const docRef = await addDoc(collection(db, "wetsuits"), {
+        ...newWetsuit,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   };
-
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>

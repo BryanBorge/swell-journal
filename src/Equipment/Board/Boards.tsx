@@ -1,5 +1,8 @@
-import { Card, CardContent, Typography, Stack, Grid } from "@mui/material";
+import { Card, CardContent, Typography, Stack, Grid, CircularProgress } from "@mui/material";
 import { EquiptmentCardTitle } from "../Shared/EquiptmentCardTitle";
+import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase";
 
 export type BoardType = {
   brand: string;
@@ -9,12 +12,36 @@ export type BoardType = {
   width: string;
 };
 
+export type FirestoreBoardType = {
+  brand: string;
+  fins: string;
+  height: string;
+  thickness: string;
+  width: string;
+  id?: string;
+};
+
 export const Boards = () => {
-  const data = localStorage.getItem("boards") ?? "";
+  const [boardData, setBoardData] = useState<Array<FirestoreBoardType>>();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const boards = data ? JSON.parse(data) : [];
+  const getdata = async () => {
+    setLoading(true);
+    await getDocs(collection(db, "boards")).then(querySnapshot => {
+      const newData = querySnapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as Array<FirestoreBoardType>;
+      setBoardData(newData);
+      setLoading(false);
+    });
+  };
 
-  const renderBoards = boards.map((board: BoardType) => {
+  useEffect(() => {
+    getdata();
+  }, []);
+
+  const renderBoards2 = boardData?.map((board: FirestoreBoardType) => {
     return (
       <Grid item xs={12} sm={3} key={`${board.brand}-${board.height}`}>
         <Card elevation={3}>
@@ -22,7 +49,7 @@ export const Boards = () => {
             <Stack spacing={1}>
               <EquiptmentCardTitle title={board.brand} />
               <Typography>{`${board.height} x ${board.width} x ${board.thickness}`}</Typography>
-              <Typography>{board.finSetup}</Typography>
+              <Typography>{board.fins}</Typography>
             </Stack>
           </CardContent>
         </Card>
@@ -30,9 +57,13 @@ export const Boards = () => {
     );
   });
 
+  if (loading) {
+    return <CircularProgress />;
+  }
+
   return (
     <Grid container spacing={2}>
-      {renderBoards}
+      {renderBoards2}
     </Grid>
   );
 };

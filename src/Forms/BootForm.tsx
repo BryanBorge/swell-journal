@@ -2,6 +2,9 @@ import { Stack, TextField, Autocomplete, Button, Box, useTheme } from "@mui/mate
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { BootType } from "../Equipment/Boot/Boot";
+import { db } from "../firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 const bootBrands = ["Xcel", "Hyperflex", "Solite"];
 const bootTypes = ["Round toe", "Split toe"];
@@ -24,14 +27,21 @@ export const BootForm = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: any) => {
-    let savedData = localStorage.getItem("boots") ?? "";
+  const onSubmit = async (data: any) => {
+    const newBoots: BootType = {
+      brand: data.brand,
+      thickness: data.thickness,
+      type: data.type,
+    };
 
-    let boots = !!savedData ? JSON.parse(savedData) : [];
-
-    boots.push(data);
-
-    localStorage.setItem("boots", JSON.stringify(boots));
+    try {
+      const docRef = await addDoc(collection(db, "boots"), {
+        ...newBoots,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   };
 
   return (

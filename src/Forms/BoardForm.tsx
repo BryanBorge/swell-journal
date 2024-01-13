@@ -2,6 +2,9 @@ import { Stack, TextField, Autocomplete, Button, Box, useTheme } from "@mui/mate
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { db } from "../firebase";
+import { FirestoreBoardType } from "../Equipment/Board/Boards";
+import { collection, addDoc } from "firebase/firestore";
 
 const boardBrands = ["Pyzel", "Lost", "Channel Islands", "Bunger", "Rusty", "Handshaped"];
 const finSetups = ["Thruster", "Twin", "Quad"];
@@ -27,14 +30,23 @@ export const BoardForm = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: any) => {
-    let savedData = localStorage.getItem("boards") ?? "";
+  const onSubmit = async (data: any) => {
+    const newBoard: FirestoreBoardType = {
+      brand: data.brand,
+      height: data.height,
+      width: data.width,
+      thickness: data.thickness,
+      fins: data.finSetup,
+    };
 
-    let boards = !!savedData ? JSON.parse(savedData) : [];
-
-    boards.push(data);
-
-    localStorage.setItem("boards", JSON.stringify(boards));
+    try {
+      const docRef = await addDoc(collection(db, "boards"), {
+        ...newBoard,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   };
 
   return (

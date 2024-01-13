@@ -1,18 +1,41 @@
-import { Card, CardContent, Typography, Stack, Grid } from "@mui/material";
+import { Card, CardContent, Typography, Stack, Grid, CircularProgress } from "@mui/material";
 import { EquiptmentCardTitle } from "../Shared/EquiptmentCardTitle";
+import { useEffect, useState } from "react";
+import { db } from "../../firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 export type GloveType = {
   brand: string;
   thickness: string;
   type: string;
+  id?: string;
 };
 
 export const Glove = () => {
-  const data = localStorage.getItem("gloves") ?? "";
+  const [gloves, setGloves] = useState<Array<GloveType>>();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const gloves = data ? JSON.parse(data) : [];
+  const getdata = async () => {
+    setLoading(true);
+    await getDocs(collection(db, "gloves")).then(querySnapshot => {
+      const newData = querySnapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as Array<GloveType>;
+      setGloves(newData);
+      setLoading(false);
+    });
+  };
 
-  const renderGloves = gloves.map((glove: GloveType) => {
+  useEffect(() => {
+    getdata();
+  }, []);
+
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  const renderGloves = gloves?.map((glove: GloveType) => {
     return (
       <Grid item xs={12} sm={3} key={`${glove.brand}-${glove.thickness}`}>
         <Card elevation={3}>
