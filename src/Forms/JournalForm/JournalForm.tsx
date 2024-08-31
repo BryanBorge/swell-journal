@@ -116,28 +116,28 @@ const validationSchema = [
   // Page 1 - Session details
   // Date, time in, time out, location, notes
   yup.object({
-    date: yup.date().required("Please enter the date"),
+    date: yup.date().required("Required"),
     timeIn: yup.mixed().required(),
     timeOut: yup.mixed().required(),
-    location: yup.string().required("Please enter a location"),
+    location: yup.string().required("Required"),
     notes: yup.string(),
   }),
   // Page 2 - Condition Details
   // Wind, tides, water/air temp, swell, storm
   yup.object({
-    windSpeed: yup.number().required(),
-    windDirection: yup.string().oneOf(directions).required(),
+    windSpeed: yup.number().required("Required"),
+    windDirection: yup.string().oneOf(directions).required("Required"),
     waterTemp: yup.number(),
     airTemp: yup.number(),
-    highTide: yup.mixed().required(),
-    lowTide: yup.mixed().required(),
-    swell: yup.mixed().required(),
+    highTide: yup.mixed().required("Required"),
+    lowTide: yup.mixed().required("Required"),
+    swell: yup.mixed().required("Required"),
     storm: yup.string(),
   }),
   // Page 3 - Gear
   //Board, wetsuit, boots, gloves
   yup.object({
-    board: yup.string().required(),
+    board: yup.string().required("Required"),
     wetsuit: yup.string(),
     glove: yup.string(),
     boot: yup.string(),
@@ -147,24 +147,24 @@ const validationSchema = [
 export const schema = yup.object().shape({
   // Page 1 - Session details
   // Date, time in, time out, location, notes
-  date: yup.date().required("Please enter the date"),
-  timeIn: yup.mixed().required(),
-  timeOut: yup.mixed().required(),
-  location: yup.string().required("Please enter a location"),
+  date: yup.date().required("Required"),
+  timeIn: yup.mixed().required("Required"),
+  timeOut: yup.mixed().required("Required"),
+  location: yup.string().required("Required"),
   notes: yup.string(),
   // Page 2 - Condition Details
   // Wind, tides, water/air temp, swell, storm
-  windSpeed: yup.number().required(),
-  windDirection: yup.string().oneOf(directions).required(),
+  windSpeed: yup.number().required("Required"),
+  windDirection: yup.string().oneOf(directions).required("Required"),
   waterTemp: yup.number(),
   airTemp: yup.number(),
   highTide: yup.mixed(),
   lowTide: yup.mixed(),
-  swell: yup.mixed().required(),
+  swell: yup.mixed().required("Required"),
   storm: yup.string(),
   // Page 3 - Gear
   //Board, wetsuit, boots, gloves
-  board: yup.string().required(),
+  board: yup.string().required("Required"),
   wetsuit: yup.string(),
   glove: yup.string(),
   boot: yup.string(),
@@ -217,7 +217,12 @@ export const JournalForm = () => {
     <>
       <FormBreadcrumbs page={page} />
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(() => {})}>{formSwitch(page)}</form>
+        <form
+          onSubmit={methods.handleSubmit(data => {
+            console.log("SUBMIT DATA!!!", data);
+          })}>
+          {formSwitch(page)}
+        </form>
       </FormProvider>
     </>
   );
