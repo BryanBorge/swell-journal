@@ -6,14 +6,18 @@ import { WetsuitType } from "../../Equipment/Wetsuit/Wetsuit";
 import { GloveType } from "../../Equipment/Glove/Glove";
 import { BootType } from "../../Equipment/Boot/Boot";
 import { BeachType } from "../BeachForm";
-import { FirstPage } from "./FirstPage";
-import { SecondPage } from "./SecondPage";
 import { FC, useState } from "react";
-import { ThirdPage } from "./ThirdPage";
-import { FourthPage } from "./FourthPage";
 import { Review } from "./Review";
 import { BoardType } from "../../Equipment/Board/Boards";
-import dayjs from "dayjs";
+import { SessionDetails } from "./SessionDetails";
+import { ConditionDetails } from "./ConditionDetails";
+import { GearDetails } from "./GearDetails";
+
+export type PageProps = {
+  page: number;
+  onBackClick: () => void;
+  onNextClick: () => void;
+};
 
 type Wind = {
   speed: number;
@@ -109,33 +113,57 @@ const directions = [
 ];
 
 const validationSchema = [
+  // Page 1 - Session details
+  // Date, time in, time out, location, notes
   yup.object({
     date: yup.date().required("Please enter the date"),
+    timeIn: yup.mixed().required(),
+    timeOut: yup.mixed().required(),
     location: yup.string().required("Please enter a location"),
+    notes: yup.string(),
   }),
+  // Page 2 - Condition Details
+  // Wind, tides, water/air temp, swell, storm
   yup.object({
-    timeIn: yup.mixed().nullable(),
-    timeOut: yup.mixed().nullable(),
-    highTide: yup.mixed().nullable(),
-    lowTide: yup.mixed().nullable(),
-  }),
-  yup.object({
-    swell: yup.mixed().required(),
     windSpeed: yup.number().required(),
     windDirection: yup.string().oneOf(directions).required(),
+    waterTemp: yup.number(),
+    airTemp: yup.number(),
+    highTide: yup.mixed().required(),
+    lowTide: yup.mixed().required(),
+    swell: yup.mixed().required(),
+    storm: yup.string(),
+  }),
+  // Page 3 - Gear
+  //Board, wetsuit, boots, gloves
+  yup.object({
+    board: yup.string().required(),
+    wetsuit: yup.string(),
+    glove: yup.string(),
+    boot: yup.string(),
   }),
 ];
 
 export const schema = yup.object().shape({
+  // Page 1 - Session details
+  // Date, time in, time out, location, notes
   date: yup.date().required("Please enter the date"),
+  timeIn: yup.mixed().required(),
+  timeOut: yup.mixed().required(),
   location: yup.string().required("Please enter a location"),
-  timeIn: yup.mixed().nullable(),
-  timeOut: yup.mixed().nullable(),
-  highTide: yup.mixed().nullable(),
-  lowTide: yup.mixed().nullable(),
-  swell: yup.mixed().required(),
+  notes: yup.string(),
+  // Page 2 - Condition Details
+  // Wind, tides, water/air temp, swell, storm
   windSpeed: yup.number().required(),
   windDirection: yup.string().oneOf(directions).required(),
+  waterTemp: yup.number(),
+  airTemp: yup.number(),
+  highTide: yup.mixed(),
+  lowTide: yup.mixed(),
+  swell: yup.mixed().required(),
+  storm: yup.string(),
+  // Page 3 - Gear
+  //Board, wetsuit, boots, gloves
   board: yup.string().required(),
   wetsuit: yup.string(),
   glove: yup.string(),
@@ -152,21 +180,13 @@ export const JournalForm = () => {
   const { ...methods } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
-    defaultValues: {
-      // date: new Date(),
-      location: "Gilgo",
-      timeIn: new Date(),
-      timeOut: new Date(),
-      lowTide: new Date(),
-      highTide: new Date(),
-    },
   });
 
   const formSwitch = (page: number) => {
     switch (page) {
       case 1:
         return (
-          <FirstPage
+          <SessionDetails
             page={page}
             onBackClick={() => setPage(page - 1)}
             onNextClick={() => setPage(page + 1)}
@@ -174,7 +194,7 @@ export const JournalForm = () => {
         );
       case 2:
         return (
-          <SecondPage
+          <ConditionDetails
             page={page}
             onBackClick={() => setPage(page - 1)}
             onNextClick={() => setPage(page + 1)}
@@ -182,30 +202,20 @@ export const JournalForm = () => {
         );
       case 3:
         return (
-          <ThirdPage
+          <GearDetails
             page={page}
             onBackClick={() => setPage(page - 1)}
             onNextClick={() => setPage(page + 1)}
           />
         );
       case 4:
-        return (
-          <FourthPage
-            page={page}
-            onBackClick={() => setPage(page - 1)}
-            onNextClick={() => setPage(page + 1)}
-          />
-        );
-      case 5:
-        return (
-          <Review page={page} onBackClick={() => setPage(page - 1)} onNextClick={() => setPage(page + 1)} />
-        );
+        return <Review page={page} onBackClick={() => setPage(page - 1)} onNextClick={() => undefined} />;
     }
   };
 
   return (
     <>
-      <FormBreadcrumbs page={page} />{" "}
+      <FormBreadcrumbs page={page} />
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(() => {})}>{formSwitch(page)}</form>
       </FormProvider>
@@ -219,11 +229,10 @@ export const FormBreadcrumbs: FC<{ page: number }> = ({ page }) => {
   return (
     <Box display="flex" justifyContent="center" sx={{ py: theme.spacing(2) }}>
       <Breadcrumbs separator="›">
-        <FormBreadcrumb currentPage={page} targetPage={1} title="Date & Location" />
-        <FormBreadcrumb currentPage={page} targetPage={2} title="Tides & Time" />
-        <FormBreadcrumb currentPage={page} targetPage={3} title="Swell & Wind" />
-        <FormBreadcrumb currentPage={page} targetPage={4} title="Equiptment" />
-        <FormBreadcrumb currentPage={page} targetPage={5} title="Review" />
+        <FormBreadcrumb currentPage={page} targetPage={1} title="Session Details" />
+        <FormBreadcrumb currentPage={page} targetPage={2} title="Conditions" />
+        <FormBreadcrumb currentPage={page} targetPage={3} title="Gear" />
+        <FormBreadcrumb currentPage={page} targetPage={4} title="Review" />
       </Breadcrumbs>
     </Box>
   );

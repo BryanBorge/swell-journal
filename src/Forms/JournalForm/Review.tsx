@@ -1,10 +1,10 @@
 import { Button, Divider, Grid, TextField, Typography } from "@mui/material";
-import { PageProps } from "./FirstPage";
 import { FC, useContext } from "react";
 import { PageTitle } from "../Shared/PageTitle";
 import { useFormContext } from "react-hook-form";
 import dayjs from "dayjs";
 import { DataContext } from "../../Context/DataContext/DataContext";
+import { PageProps } from "./JournalForm";
 
 export const Review: FC<PageProps> = ({ page, onBackClick, onNextClick }) => {
   const { getValues } = useFormContext();
@@ -47,10 +47,10 @@ export const Review: FC<PageProps> = ({ page, onBackClick, onNextClick }) => {
           <Divider />
         </Grid>
         <Grid item xs={6}>
-          <Typography gutterBottom>{`Air Temp* - 69`}</Typography>
+          <Typography gutterBottom>{`Air Temp - ${getValues("airTemp")}`}</Typography>
         </Grid>
         <Grid item xs={6}>
-          <Typography gutterBottom>{`Water Temp* - 69`}</Typography>
+          <Typography gutterBottom>{`Water Temp - ${getValues("waterTemp")}`}</Typography>
         </Grid>
         <Grid item xs={6}>
           <Typography gutterBottom>{`Low Tide - ${formattedLowTide}`}</Typography>
@@ -67,12 +67,10 @@ export const Review: FC<PageProps> = ({ page, onBackClick, onNextClick }) => {
           )}`}</Typography>
         </Grid>
         <Grid item xs={12}>
-          <TextField multiline fullWidth rows={10} label="Notes for this session?" />
+          <TextField fullWidth multiline rows={10} label="Notes" disabled value={getValues("notes")} />
         </Grid>
-        <Grid item xs={12}>
-          <Button fullWidth variant="contained">
-            SUBMIT
-          </Button>
+        <Grid item xs={12} display="flex" justifyContent="flex-end">
+          <Button variant="contained">SUBMIT</Button>
         </Grid>
       </Grid>
     </>

@@ -19,9 +19,9 @@ export interface PageTitleProps extends TitleWithToolTipProps {
 }
 
 const pageValidation = [
-  ["date", "location"],
-  ["timeIn", "timeOut", "highTide", "lowTide"],
-  ["swell", "wind"],
+  ["date", "location", "timeIn", "timeOut", "notes"],
+  ["airTemp", "waterTemp", "windSpeed", "windDirection", "lowTide", "highTide", "swell", "storm"],
+  ["board", "wetsuit", "glove", "boot"],
 ];
 
 export const PageTitle: FC<PageTitleProps> = ({
@@ -43,7 +43,7 @@ export const PageTitle: FC<PageTitleProps> = ({
   console.log("form values", getValues());
 
   return (
-    <Stack direction="row" justifyContent="space-evenly">
+    <Stack direction="row" justifyContent="space-between">
       <TitleWithToolTip title={title} toolTipText={toolTipText} />
       {showControls ? (
         <Stack direction="row">
@@ -63,7 +63,7 @@ export const PageTitle: FC<PageTitleProps> = ({
                 console.log(errors);
               }
             }}
-            disabled={page === 5}>
+            disabled={page === 4}>
             <ChevronRightIcon fontSize="inherit" />
           </IconButton>
         </Stack>

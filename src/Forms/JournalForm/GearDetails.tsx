@@ -1,32 +1,17 @@
-import { Grid, Stack, Typography } from "@mui/material";
-
-import { Controller, useFormContext } from "react-hook-form";
-import { PageProps } from "./FirstPage";
-import { FC, useContext, useEffect } from "react";
+import React, { FC, useContext, useEffect } from "react";
+import { Autocomplete, Grid, Stack, TextField, Typography } from "@mui/material";
 import { PageTitle } from "../Shared/PageTitle";
+import { Controller, useFormContext } from "react-hook-form";
+import { SwellMaskedInput } from "../../Shared/SwellMaskTextField";
+import { DesktopTimePicker } from "@mui/x-date-pickers";
+import { EquipmentCard, WetsuitType } from "../../Equipment/Wetsuit/Wetsuit";
+import { GloveType } from "../../Equipment/Glove/Glove";
+import { BootType } from "../../Equipment/Boot/Boot";
+import { BoardType } from "../../Equipment/Board/Boards";
 import { DataContext } from "../../Context/DataContext/DataContext";
-import { EquipmentCard } from "../../Equipment/Wetsuit/Wetsuit";
+import { PageProps } from "./JournalForm";
 
-const directions = [
-  "N",
-  "NNE",
-  "NE",
-  "ENE",
-  "E",
-  "ESE",
-  "SE",
-  "SSE",
-  "S",
-  "SSW",
-  "SW",
-  "WSW",
-  "W",
-  "WNW",
-  "NW",
-  "NNW",
-];
-
-export const FourthPage: FC<PageProps> = ({ page, onBackClick, onNextClick }) => {
+export const GearDetails: FC<PageProps> = ({ onBackClick, onNextClick, page }) => {
   const { control } = useFormContext();
 
   const {
@@ -75,14 +60,14 @@ export const FourthPage: FC<PageProps> = ({ page, onBackClick, onNextClick }) =>
 
         <Grid item xs={12} md={3}>
           <Typography variant="h4" gutterBottom>
-            Boards
+            Boards *
           </Typography>
           <Controller
             name="board"
             control={control}
             render={({ field }) => (
               <Stack spacing={1}>
-                {boards.map(board => (
+                {boards.map((board: BoardType) => (
                   <EquipmentCard
                     brand={board.brand}
                     desc={`${board.height} x ${board.width} x ${board.thickness} - ${board.finSetup}`}
@@ -104,7 +89,7 @@ export const FourthPage: FC<PageProps> = ({ page, onBackClick, onNextClick }) =>
             control={control}
             render={({ field }) => (
               <Stack spacing={1}>
-                {wetsuits.map(wetsuit => (
+                {wetsuits.map((wetsuit: WetsuitType) => (
                   <EquipmentCard
                     brand={wetsuit.brand}
                     desc={`${wetsuit.thickness}mm ${wetsuit.suitType} ${wetsuit.zipperType}`}
@@ -126,7 +111,7 @@ export const FourthPage: FC<PageProps> = ({ page, onBackClick, onNextClick }) =>
             control={control}
             render={({ field }) => (
               <Stack spacing={1}>
-                {gloves.map(glove => (
+                {gloves.map((glove: GloveType) => (
                   <EquipmentCard
                     brand={glove.brand}
                     desc={`${glove.thickness}mm ${glove.type}`}
@@ -148,7 +133,7 @@ export const FourthPage: FC<PageProps> = ({ page, onBackClick, onNextClick }) =>
             control={control}
             render={({ field }) => (
               <Stack spacing={1}>
-                {boots.map(boot => (
+                {boots.map((boot: BootType) => (
                   <EquipmentCard
                     brand={boot.brand}
                     desc={`${boot.thickness}mm ${boot.type}`}
