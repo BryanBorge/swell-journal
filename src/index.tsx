@@ -21,6 +21,8 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { Register } from "./Register/Register";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
+import { ToastContainer } from "./Context/ToastContainer";
+import { DataContextProvider } from "./Context/DataContext/DataContext";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -66,9 +68,13 @@ const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 root.render(
   <React.StrictMode>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <AuthContextProvider>
-        <RouterProvider router={router} />
-      </AuthContextProvider>
+      <ToastContainer>
+        <AuthContextProvider>
+          <DataContextProvider>
+            <RouterProvider router={router} />
+          </DataContextProvider>
+        </AuthContextProvider>
+      </ToastContainer>
     </LocalizationProvider>
   </React.StrictMode>
 );
