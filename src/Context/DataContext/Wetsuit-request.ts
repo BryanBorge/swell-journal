@@ -13,14 +13,14 @@ export const getWetsuitsForUser =
   async () => {
     setLoading(true);
     try {
-      // Get all boards for the current user
+      // Get all wetsiots for the current user
       const wetsuitCollection = collection(db, `wetsuits/${uid}/wetsuits`);
 
       const wetsuitQuery = query(wetsuitCollection);
 
-      const boardSnapshot = await getDocs(wetsuitQuery);
+      const wetsuitSnapshot = await getDocs(wetsuitQuery);
 
-      const wetsuitData = boardSnapshot.docs.map(doc => ({
+      const wetsuitData = wetsuitSnapshot.docs.map(doc => ({
         ...doc.data(),
         id: doc.id,
       })) as Array<WetsuitType>;
@@ -38,7 +38,7 @@ export const getWetsuitsForUser =
 export const addWetsuit =
   (uid: string | undefined, showSuccessToast: any, setError: any) => async (newWetsuit: WetsuitType) => {
     try {
-      // Boards for the currentuser
+      // Wetsuits for the currentuser
       const wetsuitCollection = collection(db, `wetsuits/${uid}/wetsuits`);
 
       const docRef = await addDoc(wetsuitCollection, {
@@ -62,6 +62,5 @@ export const deleteWetsuit =
       );
     } catch (err) {
       showErrorToast("Something went wrong removing this wetsuit");
-      // setError("Something went wrong removing this board");
     }
   };

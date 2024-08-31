@@ -95,7 +95,7 @@ export const DataContextProvider: FC<{ children: ReactNode }> = ({ children }) =
         addGlove: addGlove(user?.uid, showSuccessToast, setError),
         deleteGlove: deleteGlove(user?.uid, showSuccessToast, showErrorToast, setLoading, setError),
         // BOOTS
-        getBootsForUser: getBootsForUser(user?.uid, setLoading, setGloves, setError),
+        getBootsForUser: getBootsForUser(user?.uid, setLoading, setBoots, setError),
         addBoot: addBoot(user?.uid, showSuccessToast, setError),
         deleteBoot: deleteBoot(user?.uid, showSuccessToast, showErrorToast, setLoading, setError),
       }}>

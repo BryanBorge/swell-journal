@@ -13,7 +13,7 @@ export const getGolvesForUser =
   async () => {
     setLoading(true);
     try {
-      // Get all boards for the current user
+      // Get all gloves for the current user
       const gloveCollection = collection(db, `gloves/${uid}/gloves`);
 
       const gloveQuery = query(gloveCollection);
@@ -38,7 +38,7 @@ export const getGolvesForUser =
 export const addGlove =
   (uid: string | undefined, showSuccessToast: any, setError: any) => async (newGlove: GloveType) => {
     try {
-      // Boards for the currentuser
+      // Gloves for the currentuser
       const gloveCollection = collection(db, `gloves/${uid}/gloves`);
 
       const docRef = await addDoc(gloveCollection, {
@@ -62,6 +62,5 @@ export const deleteGlove =
       );
     } catch (err) {
       showErrorToast("Something went wrong removing this glove");
-      // setError("Something went wrong removing this board");
     }
   };

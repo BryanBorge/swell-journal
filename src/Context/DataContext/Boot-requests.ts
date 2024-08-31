@@ -13,7 +13,7 @@ export const getBootsForUser =
   async () => {
     setLoading(true);
     try {
-      // Get all boards for the current user
+      // Get all boots for the current user
       const bootCollection = collection(db, `boots/${uid}/boots`);
 
       const bootQuery = query(bootCollection);
@@ -38,7 +38,7 @@ export const getBootsForUser =
 export const addBoot =
   (uid: string | undefined, showSuccessToast: any, setError: any) => async (newBoot: BootType) => {
     try {
-      // Boards for the currentuser
+      // Boots for the currentuser
       const bootCollection = collection(db, `boots/${uid}/boots`);
 
       const docRef = await addDoc(bootCollection, {
@@ -57,7 +57,7 @@ export const deleteBoot =
   (uid: string | undefined, showSuccessToast: any, showErrorToast: any, setLoading: any, setError: any) =>
   async (bootId?: string) => {
     try {
-      await deleteDoc(doc(db, `boards/${uid}/boards`, bootId ?? "")).then(res =>
+      await deleteDoc(doc(db, `boots/${uid}/boots`, bootId ?? "")).then(res =>
         showSuccessToast("Boot deleted")
       );
     } catch (err) {
