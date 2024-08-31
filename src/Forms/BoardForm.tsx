@@ -7,8 +7,8 @@ import { MaskedInput } from "../Shared/HeightMaskTextField";
 import { BoardType } from "../Equipment/Board/Boards";
 import { DataContext } from "../Context/DataContext/DataContext";
 
-const boardBrands = ["Pyzel", "Lost", "Channel Islands", "Bunger", "Rusty", "Handshaped"];
-const finSetups = ["Thruster", "Twin", "Quad"];
+const boardBrands = ["Pyzel", "Lost", "Channel Islands", "Bunger", "Rusty", "Infinity", "Handshaped"];
+const finSetups = ["Single Fun", "Twin", "Thruster", "Quad", "Five Fin"];
 
 const schema = yup.object().shape({
   brand: yup.string().required("Please enter the brand name"),

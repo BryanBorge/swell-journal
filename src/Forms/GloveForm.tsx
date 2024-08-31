@@ -6,7 +6,7 @@ import { GloveType } from "../Equipment/Glove/Glove";
 import { FC, useContext } from "react";
 import { DataContext } from "../Context/DataContext/DataContext";
 
-const gloveBrands = ["Xcel", "Hyperflex"];
+const gloveBrands = ["Xcel", "Hyperflex", "Buell", "Ripcurl"];
 const gloveTypes = ["Lobster claw", "Five finger", "Mitten"];
 
 const schema = yup.object().shape({
