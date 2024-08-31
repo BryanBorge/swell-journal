@@ -1,5 +1,5 @@
 import { Card, CardContent, CircularProgress, Grid, Stack, Typography } from "@mui/material";
-import { useContext, useEffect } from "react";
+import { FC, useContext, useEffect } from "react";
 import { EquiptmentCardTitle } from "../Shared/EquiptmentCardTitle";
 import { DataContext } from "../../Context/DataContext/DataContext";
 
@@ -12,7 +12,11 @@ export type BoardType = {
   id?: string;
 };
 
-export const Boards = () => {
+type BoardProps = {
+  disableEditAndDelete?: boolean;
+};
+
+export const Boards: FC<BoardProps> = ({ disableEditAndDelete = false }) => {
   const { boards, error, loading, getBoardsForUser, deleteBoard } = useContext(DataContext);
 
   useEffect(() => {
@@ -33,6 +37,7 @@ export const Boards = () => {
                     getBoardsForUser();
                   }, 200);
                 }}
+                hideButtons={disableEditAndDelete}
               />
               <Typography>{`${board.height} x ${board.width} x ${board.thickness}`}</Typography>
               <Typography>{board.finSetup}</Typography>

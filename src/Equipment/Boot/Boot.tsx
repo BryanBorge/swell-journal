@@ -1,6 +1,6 @@
 import { Card, CardContent, Typography, Stack, Grid, CircularProgress } from "@mui/material";
 import { EquiptmentCardTitle } from "../Shared/EquiptmentCardTitle";
-import { useContext, useEffect } from "react";
+import { FC, useContext, useEffect } from "react";
 import { DataContext } from "../../Context/DataContext/DataContext";
 
 export type BootType = {
@@ -10,7 +10,11 @@ export type BootType = {
   id?: string;
 };
 
-export const Boot = () => {
+type BootProps = {
+  disableEditAndDelete?: boolean;
+};
+
+export const Boot: FC<BootProps> = ({ disableEditAndDelete = false }) => {
   const { boots, error, loading, getBootsForUser, deleteBoot } = useContext(DataContext);
 
   useEffect(() => {
@@ -39,6 +43,7 @@ export const Boot = () => {
                     getBootsForUser();
                   }, 200);
                 }}
+                hideButtons={disableEditAndDelete}
               />
               <Typography>{`${boot.thickness}mm ${boot.type}`}</Typography>
             </Stack>

@@ -8,7 +8,7 @@ export const ContentLayout = () => {
   return (
     <>
       <Header />
-      <Container sx={{ py: theme.spacing(3) }}>
+      <Container maxWidth="lg" sx={{ py: theme.spacing(2) }}>
         <Outlet />
       </Container>
     </>

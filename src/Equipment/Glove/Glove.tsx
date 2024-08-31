@@ -1,6 +1,6 @@
 import { Card, CardContent, Typography, Stack, Grid, CircularProgress } from "@mui/material";
 import { EquiptmentCardTitle } from "../Shared/EquiptmentCardTitle";
-import { useContext, useEffect } from "react";
+import { FC, useContext, useEffect } from "react";
 import { DataContext } from "../../Context/DataContext/DataContext";
 
 export type GloveType = {
@@ -10,7 +10,11 @@ export type GloveType = {
   id?: string;
 };
 
-export const Glove = () => {
+type GloveProps = {
+  disableEditAndDelete?: boolean;
+};
+
+export const Glove: FC<GloveProps> = ({ disableEditAndDelete = false }) => {
   const { getGlovesForUser, deleteGlove, gloves, loading, error } = useContext(DataContext);
 
   useEffect(() => {
@@ -39,6 +43,7 @@ export const Glove = () => {
                     getGlovesForUser();
                   }, 200);
                 }}
+                hideButtons={disableEditAndDelete}
               />
               <Typography>{`${glove.thickness}mm ${glove.type}`}</Typography>
             </Stack>

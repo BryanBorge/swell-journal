@@ -1,7 +1,8 @@
-import { Card, CardContent, Typography, Stack, Grid, CircularProgress } from "@mui/material";
+import { Card, CardContent, Typography, Stack, Grid, CircularProgress, CardActionArea } from "@mui/material";
 import { EquiptmentCardTitle } from "../Shared/EquiptmentCardTitle";
-import { useContext, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { DataContext } from "../../Context/DataContext/DataContext";
+import { useTheme } from "@emotion/react";
 
 export type WetsuitType = {
   brand: string;
@@ -11,7 +12,11 @@ export type WetsuitType = {
   id?: string;
 };
 
-export const Wetsuit = () => {
+type WetsuitProps = {
+  disableEditAndDelete?: boolean;
+};
+
+export const Wetsuit: FC<WetsuitProps> = ({ disableEditAndDelete = false }) => {
   const { getWetsuitsForUser, deleteWetsuit, wetsuits, loading, error } = useContext(DataContext);
 
   useEffect(() => {
@@ -32,6 +37,7 @@ export const Wetsuit = () => {
                     getWetsuitsForUser();
                   }, 200);
                 }}
+                hideButtons={disableEditAndDelete}
               />
               <Typography>{`${wetsuit.thickness}mm ${wetsuit.suitType} ${wetsuit.zipperType}`}</Typography>
             </Stack>
@@ -57,5 +63,35 @@ export const Wetsuit = () => {
     <Grid container spacing={2}>
       {renderWetsuits}
     </Grid>
+  );
+};
+
+export const EquipmentCard = ({
+  brand,
+  desc,
+  selected,
+  onClick,
+}: {
+  brand: any;
+  desc: any;
+  selected: boolean;
+  onClick: () => void;
+}) => {
+  const theme = useTheme();
+
+  return (
+    <Card
+      onClick={() => onClick()}
+      elevation={selected ? 5 : 2}
+      sx={theme => ({ border: selected ? `2px solid ${theme.palette.success.main}` : undefined })}>
+      <CardActionArea>
+        <CardContent>
+          <Stack spacing={0.5}>
+            <EquiptmentCardTitle title={brand} hideButtons />
+            <Typography>{desc}</Typography>
+          </Stack>
+        </CardContent>
+      </CardActionArea>
+    </Card>
   );
 };
