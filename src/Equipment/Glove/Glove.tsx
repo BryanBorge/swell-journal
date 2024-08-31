@@ -1,9 +1,7 @@
 import { Card, CardContent, Typography, Stack, Grid, CircularProgress } from "@mui/material";
 import { EquiptmentCardTitle } from "../Shared/EquiptmentCardTitle";
-import { useContext, useEffect, useState } from "react";
-import { db } from "../../firebase";
-import { collection, getDocs, query } from "firebase/firestore";
-import { AuthContext } from "../../Context/AuthContext";
+import { useContext, useEffect } from "react";
+import { DataContext } from "../../Context/DataContext/DataContext";
 
 export type GloveType = {
   brand: string;
@@ -13,37 +11,10 @@ export type GloveType = {
 };
 
 export const Glove = () => {
-  const [gloves, setGloves] = useState<Array<GloveType>>();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | undefined>(undefined);
-  const { user } = useContext(AuthContext);
+  const { getGlovesForUser, deleteGlove, gloves, loading, error } = useContext(DataContext);
 
-  const getdata = async () => {
-    setLoading(true);
-
-    try {
-      // Get all wetsuits for the current user
-      const gloveCollection = collection(db, `gloves/${user?.uid}/gloves`);
-
-      const gloveQuery = query(gloveCollection);
-
-      const wetsuitSnapshot = await getDocs(gloveQuery);
-
-      const newData = wetsuitSnapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id,
-      })) as Array<GloveType>;
-
-      setGloves(newData);
-      setLoading(false);
-    } catch (err: any) {
-      console.log(err);
-      if (err.code === "permission-denied") setError("Sign in or register to see this!");
-      else setError("Something went wrong loading boards...");
-    }
-  };
   useEffect(() => {
-    getdata();
+    getGlovesForUser();
   }, []);
 
   if (error) {
@@ -60,7 +31,15 @@ export const Glove = () => {
         <Card elevation={3}>
           <CardContent>
             <Stack spacing={1}>
-              <EquiptmentCardTitle title={glove.brand} />
+              <EquiptmentCardTitle
+                title={glove.brand}
+                onDeleteClick={() => {
+                  deleteGlove(glove.id);
+                  setTimeout(() => {
+                    getGlovesForUser();
+                  }, 200);
+                }}
+              />
               <Typography>{`${glove.thickness}mm ${glove.type}`}</Typography>
             </Stack>
           </CardContent>

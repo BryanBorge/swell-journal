@@ -21,7 +21,7 @@ export const GloveFormDialog: FC<GloveFormDialogProps> = ({ open, onClose }) => 
         </Stack>
       </DialogTitle>
       <DialogContent>
-        <GloveForm />
+        <GloveForm closeDialog={() => onClose()} />
       </DialogContent>
     </Dialog>
   );

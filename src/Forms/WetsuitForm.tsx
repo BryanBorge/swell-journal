@@ -1,12 +1,11 @@
-import { Stack, TextField, Autocomplete, Button, Box, useTheme, MenuItem } from "@mui/material";
+import { Stack, TextField, Autocomplete, Button, Box, useTheme, MenuItem, Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { WetsuitType } from "../Equipment/Wetsuit/Wetsuit";
-import { db } from "../firebase";
-import { collection, addDoc } from "firebase/firestore";
-import { useContext } from "react";
+import { FC, useContext } from "react";
 import { AuthContext } from "../Context/AuthContext";
+import { DataContext } from "../Context/DataContext/DataContext";
 
 const wetsuitBrands = ["Xcel", "Hyperflex"];
 
@@ -31,13 +30,15 @@ const schema = yup.object().shape({
   suitType: yup.string().required("Please enter suit type"),
 });
 
-export const WetsuitForm = () => {
+export const WetsuitForm: FC<{ closeDialog: () => void }> = ({ closeDialog }) => {
   const theme = useTheme();
   const { user } = useContext(AuthContext);
+  const { addWetsuit, getWetsuitsForUser, error } = useContext(DataContext);
 
   const {
     control,
     handleSubmit,
+    clearErrors,
     formState: { errors },
   } = useForm({
     mode: "onChange",
@@ -52,17 +53,18 @@ export const WetsuitForm = () => {
       zipperType: data.zipperType,
     };
 
-    try {
-      // Wetsuits for the currentuser
-      const wetsuitCollection = collection(db, `wetsuits/${user?.uid}/wetsuits`);
-      const docRef = await addDoc(wetsuitCollection, {
-        ...newWetsuit,
-      });
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
+    addWetsuit(newWetsuit);
+    clearErrors();
+    closeDialog();
+    setTimeout(() => {
+      getWetsuitsForUser();
+    }, 100);
   };
+
+  if (error) {
+    return <Typography>{error}</Typography>;
+  }
+
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>

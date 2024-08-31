@@ -21,7 +21,7 @@ export const BootFormDialog: FC<BootFormDialogProps> = ({ open, onClose }) => {
         </Stack>
       </DialogTitle>
       <DialogContent>
-        <BootForm />
+        <BootForm closeDialog={() => onClose()} />
       </DialogContent>
     </Dialog>
   );

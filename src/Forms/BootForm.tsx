@@ -1,12 +1,10 @@
-import { Stack, TextField, Autocomplete, Button, Box, useTheme } from "@mui/material";
+import { Stack, TextField, Autocomplete, Button, Box, useTheme, Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { BootType } from "../Equipment/Boot/Boot";
-import { db } from "../firebase";
-import { collection, addDoc } from "firebase/firestore";
-import { useContext } from "react";
-import { AuthContext } from "../Context/AuthContext";
+import { FC, useContext } from "react";
+import { DataContext } from "../Context/DataContext/DataContext";
 
 const bootBrands = ["Xcel", "Hyperflex", "Solite"];
 const bootTypes = ["Round toe", "Split toe"];
@@ -17,13 +15,14 @@ const schema = yup.object().shape({
   type: yup.string().required("Please enter boot type"),
 });
 
-export const BootForm = () => {
+export const BootForm: FC<{ closeDialog: () => void }> = ({ closeDialog }) => {
   const theme = useTheme();
-  const { user } = useContext(AuthContext);
+  const { addBoot, getBootsForUser, error } = useContext(DataContext);
 
   const {
     control,
     handleSubmit,
+    clearErrors,
     formState: { errors },
   } = useForm({
     mode: "onChange",
@@ -31,23 +30,23 @@ export const BootForm = () => {
   });
 
   const onSubmit = async (data: any) => {
-    const newBoots: BootType = {
+    const newBoot: BootType = {
       brand: data.brand,
       thickness: data.thickness,
       type: data.type,
     };
 
-    try {
-      // Wetsuits for the currentuser
-      const bootCollection = collection(db, `boots/${user?.uid}/boots`);
-      const docRef = await addDoc(bootCollection, {
-        ...newBoots,
-      });
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
+    addBoot(newBoot);
+    clearErrors();
+    closeDialog();
+    setTimeout(() => {
+      getBootsForUser();
+    }, 100);
   };
+
+  if (error) {
+    return <Typography>{error}</Typography>;
+  }
 
   return (
     <>

@@ -1,12 +1,11 @@
-import { Stack, TextField, Autocomplete, Button, Box, useTheme } from "@mui/material";
+import { Stack, TextField, Autocomplete, Button, Box, useTheme, Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { db } from "../firebase";
-import { collection, addDoc } from "firebase/firestore";
-import { useContext } from "react";
-import { AuthContext } from "../Context/AuthContext";
+import { FC, useContext } from "react";
+import { MaskedInput } from "../Shared/HeightMaskTextField";
 import { BoardType } from "../Equipment/Board/Boards";
+import { DataContext } from "../Context/DataContext/DataContext";
 
 const boardBrands = ["Pyzel", "Lost", "Channel Islands", "Bunger", "Rusty", "Handshaped"];
 const finSetups = ["Thruster", "Twin", "Quad"];
@@ -20,15 +19,23 @@ const schema = yup.object().shape({
   finSetup: yup.string().required("Please enter fin setup"),
 });
 
-export const BoardForm = () => {
+export const BoardForm: FC<{ closeDialog: () => void }> = ({ closeDialog }) => {
   const theme = useTheme();
-  const { user } = useContext(AuthContext);
+  const { addBoard, getBoardsForUser, error } = useContext(DataContext);
   const {
     control,
     handleSubmit,
+    clearErrors,
     formState: { errors },
   } = useForm({
     mode: "onChange",
+    defaultValues: {
+      brand: "",
+      finSetup: "",
+      height: "",
+      thickness: "",
+      width: "",
+    },
     resolver: yupResolver(schema),
   });
 
@@ -41,18 +48,17 @@ export const BoardForm = () => {
       finSetup: data.finSetup,
     };
 
-    try {
-      // Boards for the currentuser
-      const boardCollection = collection(db, `boards/${user?.uid}/boards`);
-
-      const docRef = await addDoc(boardCollection, {
-        ...newBoard,
-      });
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
+    addBoard(newBoard);
+    clearErrors();
+    closeDialog();
+    setTimeout(() => {
+      getBoardsForUser();
+    }, 100);
   };
+
+  if (error) {
+    return <Typography>{error}</Typography>;
+  }
 
   return (
     <>
@@ -84,13 +90,20 @@ export const BoardForm = () => {
           <Controller
             name="height"
             control={control}
-            render={({ field: { onChange, value } }: any) => (
+            render={({ field: { onChange, value, ref } }: any) => (
               <TextField
-                InputProps={{ inputProps: { min: 0 } }}
+                InputProps={{
+                  inputProps: { min: 0, mask: `#' ##"` },
+                  ref,
+                  inputComponent: MaskedInput,
+                  onChange: onChange,
+                  value: value,
+                }}
                 onChange={onChange}
                 value={value}
                 error={!!errors.height?.message}
                 helperText={errors.height?.message}
+                placeholder={`6' 02"`}
                 name="height"
                 label="Height"
               />
@@ -99,13 +112,20 @@ export const BoardForm = () => {
           <Controller
             name="width"
             control={control}
-            render={({ field: { onChange, value } }: any) => (
+            render={({ field: { onChange, value, ref } }: any) => (
               <TextField
-                InputProps={{ inputProps: { min: 0 } }}
+                InputProps={{
+                  inputProps: { min: 0, mask: `##"` },
+                  ref,
+                  inputComponent: MaskedInput,
+                  onChange: onChange,
+                  value: value,
+                }}
                 onChange={onChange}
                 value={value}
                 error={!!errors.width?.message}
                 helperText={errors.width?.message}
+                placeholder={`19"`}
                 name="width"
                 label="Width"
               />
@@ -114,13 +134,20 @@ export const BoardForm = () => {
           <Controller
             name="thickness"
             control={control}
-            render={({ field: { onChange, value } }: any) => (
+            render={({ field: { onChange, value, ref } }: any) => (
               <TextField
-                InputProps={{ inputProps: { min: 0 } }}
+                InputProps={{
+                  inputProps: { min: 0, mask: `#.##"` },
+                  ref,
+                  inputComponent: MaskedInput,
+                  onChange: onChange,
+                  value: value,
+                }}
                 onChange={onChange}
                 value={value}
                 error={!!errors.thickness?.message}
                 helperText={errors.thickness?.message}
+                placeholder={`2.25"`}
                 name="thickness"
                 label="Thickness"
               />

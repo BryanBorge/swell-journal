@@ -21,7 +21,7 @@ export const WetsuitFormDialog: FC<WetsuitFormDialogProps> = ({ open, onClose })
         </Stack>
       </DialogTitle>
       <DialogContent>
-        <WetsuitForm />
+        <WetsuitForm closeDialog={() => onClose()} />
       </DialogContent>
     </Dialog>
   );

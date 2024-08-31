@@ -21,7 +21,7 @@ export const BoardFormDialog: FC<BoardFormDialogProps> = ({ open, onClose }) => 
         </Stack>
       </DialogTitle>
       <DialogContent>
-        <BoardForm />
+        <BoardForm closeDialog={() => onClose()} />
       </DialogContent>
     </Dialog>
   );

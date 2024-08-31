@@ -3,10 +3,8 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { GloveType } from "../Equipment/Glove/Glove";
-import { collection, addDoc } from "firebase/firestore";
-import { db } from "../firebase";
-import { AuthContext } from "../Context/AuthContext";
-import { useContext } from "react";
+import { FC, useContext } from "react";
+import { DataContext } from "../Context/DataContext/DataContext";
 
 const gloveBrands = ["Xcel", "Hyperflex"];
 const gloveTypes = ["Lobster claw", "Five finger", "Mitten"];
@@ -17,12 +15,14 @@ const schema = yup.object().shape({
   type: yup.string().required("Please enter glove type"),
 });
 
-export const GloveForm = () => {
+export const GloveForm: FC<{ closeDialog: () => void }> = ({ closeDialog }) => {
   const theme = useTheme();
-  const { user } = useContext(AuthContext);
+  const { addGlove, getGlovesForUser, error } = useContext(DataContext);
+
   const {
     control,
     handleSubmit,
+    clearErrors,
     formState: { errors },
   } = useForm({
     mode: "onChange",
@@ -30,22 +30,18 @@ export const GloveForm = () => {
   });
 
   const onSubmit = async (data: any) => {
-    const newGloves: GloveType = {
+    const newGlove: GloveType = {
       brand: data.brand,
       thickness: data.thickness,
       type: data.type,
     };
 
-    try {
-      // Wetsuits for the currentuser
-      const gloveCollection = collection(db, `gloves/${user?.uid}/gloves`);
-      const docRef = await addDoc(gloveCollection, {
-        ...newGloves,
-      });
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
+    addGlove(newGlove);
+    clearErrors();
+    closeDialog();
+    setTimeout(() => {
+      getGlovesForUser();
+    }, 100);
   };
 
   return (
